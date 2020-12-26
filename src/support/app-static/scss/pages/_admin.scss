@@ -1,0 +1,23 @@
+@charset "utf-8";
+
+.notice {
+  position: absolute;
+  width: 100%;
+  padding: .75rem 1.25rem;
+  z-index: 100;
+  font-size: .875rem;
+  text-align: center;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.1);
+}
+
+.notice-error {
+  background: #fee1e1;
+  color: #823636;
+}
+
+.notice-success {
+  background: #d5f5d9;
+  color: #186a21;
+}
+
+

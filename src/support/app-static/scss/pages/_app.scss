@@ -1,0 +1,165 @@
+@charset "utf-8";
+
+.syso-main {
+  margin-top: 1rem;
+}
+
+.metrics-backdrop {
+  display: none;
+  position: absolute;
+  z-index: 1040;
+  background-color: rgba(0,0,0,.45);
+  opacity: .5;
+
+  &.show {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center
+  }
+}
+
+@media (max-width: 991.98px) {//767.98px
+  .syso-main {
+    padding: 0 !important;
+  }
+}
+
+
+
+.list-post {
+  padding-left: 0;
+  margin-bottom: 0;
+
+  li {
+    display: block;
+    padding: 0.75rem 1.25rem;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #eef2f7;
+    }
+  }
+}
+
+.list-post-title {
+  color: #2e3135;
+  font-size: 1rem;
+
+  &:hover {
+    color: #2e3135;
+    text-decoration: underline;
+  }
+}
+
+.list-post-meta {
+  margin-top: .25rem;
+  font-size: 12px;
+
+  span:not(:last-child) {
+    &:after {
+      content: "·";
+      margin: 0 .4rem;
+    }
+  }
+}
+
+
+.dot-list {
+  li:not(:last-child):after {
+    content: "·";
+    margin: 0 .3rem;
+    color: #8a8a8a;
+  }
+} 
+
+.dot-after:after {
+  content: "·";
+  margin: 0 .4rem;
+}
+
+.card-header {
+  background-color: #fff;
+  border-bottom-color: #eef2f7;
+}
+
+// .card-body {
+//   padding: 1rem;
+// }
+
+.syso-divider {
+  position: relative;
+  height: 1px;
+  margin: 1.5rem 0 1rem;
+  background-color: #ddd;
+
+  & > span {
+    position: absolute;
+    left: 50%;
+    padding: 0 1.5rem;
+    background-color: #fff;
+    font-weight: 600;
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+}
+
+.follow-me {
+  text-align: center;
+
+  a {
+    display: inline-block;
+    color: #919ca7;
+
+    i {
+        font-size: 1.25rem;
+    }
+
+    &:not(:last-child) {
+      margin-right: 1rem;
+    }
+
+    &:hover {
+      text-decoration: none;
+      color: #343a40;
+    }
+  }
+}
+
+.weixin {
+  display: flex;
+  align-items: center;
+  padding: .5rem .5rem .5rem 1rem;
+
+  & > img {
+    width: 66px;
+    height:66px;
+    margin-left: -.3rem;
+    margin-right: .3rem;
+  }
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 22px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  background: #898989;
+  cursor: pointer;
+  z-index: 1024;
+  border-radius: .2rem;
+
+  &:hover {
+    background: darken(#898989, 10%);
+    color: #fff;
+  }
+
+  &.show {
+    display: flex;
+  }
+}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.ehcache.org/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jsr107="http://www.ehcache.org/v3/jsr107">
+    <service>
+        <jsr107:defaults enable-management="false" enable-statistics="false" />
+    </service>
+
+    <thread-pools>
+        <thread-pool alias="small" default="true" min-size="2" max-size="2" />
+    </thread-pools>
+
+    <!-- 默认配置模板 -->
+    <cache-template name="default-tpl">
+        <expiry>
+            <ttl unit="days">1</ttl><!-- 默认过期时间 -->
+            <!--<none/> 永不过期 -->
+        </expiry>
+        <listeners>
+            <listener>
+                <class>com.chuonye.syso.manager.CacheEventLogger</class>
+                <event-firing-mode>SYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+            </listener>
+        </listeners>
+        <resources>
+            <heap unit="MB">5</heap> <!-- 堆内默认缓存 5M 对象 -->
+        </resources>
+    </cache-template>
+
+    <cache alias="cache.posts" uses-template="default-tpl">
+        <key-type>java.lang.String</key-type>
+        <expiry>
+            <ttl unit="days">7</ttl>
+        </expiry>
+    </cache>
+
+    <!-- 缓存已读文章的用户 -->
+    <cache alias="cache.users" uses-template="default-tpl">
+        <key-type>java.lang.String</key-type>
+        <expiry>
+            <ttl unit="hours">4</ttl>
+        </expiry>
+    </cache>
+    <cache alias="cache.post.views">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.concurrent.atomic.AtomicInteger</value-type>
+        <expiry>
+            <none/> <!-- 永不过期 -->
+        </expiry>
+        <resources>
+            <heap unit="entries">500</heap> <!-- 缓存500篇文章的阅读数 -->
+        </resources>
+    </cache>
+    
+    <cache alias="cache.options" uses-template="default-tpl">
+        <key-type>java.lang.String</key-type>
+        <expiry>
+            <none/> <!-- 永不过期 -->
+        </expiry>
+        <resources>
+            <heap unit="entries">50</heap>
+        </resources>
+    </cache>
+</config>

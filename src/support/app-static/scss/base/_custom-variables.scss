@@ -1,0 +1,186 @@
+// Your variable overrides
+
+$gray-100:                            #eef2f7;
+
+$blue:                                #0074d9;
+$indigo:                              #727cf5;
+$purple:                              #b10dc9;
+$pink:                                #ff679b;
+$red:                                 #ff4136;
+$orange:                              #ff851b;
+$yellow:                              #ffdc00;
+$green:                               #2ecc40;
+$teal:                                #39cccc;
+$cyan:                                #7fdbff;
+
+$gray:                                #aaaaaa;
+$gray-dark:                           #343a40;
+
+$primary:                             $blue;     //$blue !default;
+$secondary:                           #919ca7;   //$gray-600 !default;
+$success:                             $green;    //$green !default;
+$info:                                $cyan;     //$cyan !default;
+$warning:                             $yellow;   //$yellow !default;
+$danger:                              $red;      //$red !default;
+$light:                               $gray-100; //$gray-100!default;
+$dark:                                #474d56;   //$gray-800 !default;
+
+$body-bg:                             #f9f9f9;
+$body-color:                          rgba(0,0,0,.65); // #919ca7
+
+$link-hover-decoration:               none;
+
+// $grid-gutter-width:                   24px; //30px !default;
+
+$border-color:                        #eef2f7;// $gray-300 !default;
+
+$font-family-sans-serif:              "Nunito",sans-serif;
+
+$font-size-base:                      .9rem; //1rem !default;
+$font-size-lg:                        1.25rem;
+$font-size-sm:                        .875rem;
+
+
+$h1-font-size:                        2.25rem;
+$h2-font-size:                        1.875rem;
+$h3-font-size:                        1.5rem;
+$h4-font-size:                        1.125rem;
+$h5-font-size:                        .9375rem;
+$h6-font-size:                        .75rem;
+
+$headings-margin-bottom:              1rem;
+$headings-font-weight:                600;
+$headings-line-height:                1.1;
+
+$lead-font-size:                      1.125rem;
+
+$small-font-size:                     .75rem;
+
+$text-muted:                          #98a6ad;
+
+$blockquote-small-font-size:          80%;
+
+$hr-border-color:                     $gray-100;
+
+$list-inline-padding:                 6px; //.5rem !default;
+
+// Image thumbnails
+$thumbnail-bg:                        #fff;
+
+// Tables
+$table-cell-padding:                  .95rem; //.75rem !default;
+$table-cell-padding-sm:               .5rem; // .3rem !default;
+
+$table-accent-bg:                     #f1f3fa;
+
+
+// Buttons + Forms
+$input-btn-padding-y:                 .45rem;// .375rem !default;
+$input-btn-padding-x:                 .9rem;// .75rem !default;
+
+$input-btn-padding-y-sm:              .28rem;
+$input-btn-padding-x-sm:              .8rem;
+$input-btn-font-size-sm:              .875rem;
+
+// Forms
+$input-focus-border-color:             #c1c9d0;//lighten($component-active-bg, 25%) !default;
+$input-focus-box-shadow:               none; //$input-btn-focus-box-shadow !default;
+
+$input-placeholder-color:              #adb5bd; // $gray-600 !default;
+
+$input-plaintext-color:                #212529;
+
+
+$input-height:                         calc(2.25rem + 2px);
+$input-height-sm:                      calc(1.8725rem + 2px);
+$input-height-lg:                      calc(2.875rem + 2px);
+
+
+// Form validation
+$form-feedback-font-size:              .875rem;
+
+// Dropdown
+$dropdown-padding-y:                   .25rem;
+
+$dropdown-link-color:                  #919ca7;// $gray-900 !default;
+$dropdown-link-hover-color:            #3b4048;// darken($gray-900, 5%) !default;
+$dropdown-link-hover-bg:               #f8f9fa;// $gray-100 !default;
+
+$dropdown-link-active-color:           #474d56;// $component-active-color !default;
+$dropdown-link-active-bg:              #f8fafc;// $component-active-bg !default;
+
+
+$dropdown-border-color:                #e4eaf2;
+$dropdown-divider-margin-y:            .5rem;
+
+
+$dropdown-item-padding-y:              .375rem;
+
+// Navs
+$nav-tabs-link-active-bg:              #fff;
+
+// Navbar
+$navbar-light-color:                   #919ca7;//rgba($black, .5) !default;
+$navbar-light-hover-color:             #343a40;//rgba($black, .7) !default;
+$navbar-light-active-color:            $primary;//  rgba($black, .9) !default;
+$navbar-light-disabled-color:          #adb5bd;//   rgba($black, .3) !default;
+
+// Cards
+$card-spacer-x:                        1.5rem;// 1.25rem !default;
+$card-group-margin:                    15px; //$grid-gutter-width / 2 !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y:                 1rem;
+$breadcrumb-padding-x:                 0rem;
+
+$breadcrumb-bg:                        transparent; //$gray-200 !default;
+$breadcrumb-divider-color:             #ced4da;//$gray-600 !default;
+$breadcrumb-active-color:              #adb5bd;//$gray-600 !default;
+
+
+// Pagination
+$pagination-color:                     #474d56;//$link-color !default;
+$pagination-hover-color:               #474d56;//$link-hover-color !default;
+
+// Progress bars
+$progress-font-size:                  .75rem;
+
+
+// List group
+$list-group-border-color:              #eef2f7; //rgba($black, .125) !default;
+
+$list-group-hover-bg:                  #f8f9fa; //$gray-100 !default;
+
+$list-group-disabled-bg:               #f9f9fd;//$list-group-bg !default;
+
+
+$list-group-action-active-color:       #212529; //$body-color !default;
+
+// Close
+$close-text-shadow:                    none;
+
+//Modals
+$modal-content-border-radius:          .2rem;
+
+$modal-backdrop-opacity:               .7;
+
+// Tooltips
+$tooltip-color:                        #f1f3fa;
+$tooltip-bg:                           #343a40;
+$tooltip-padding-y:                    .4rem;
+$tooltip-padding-x:                    .8rem;
+
+
+// Popovers
+
+$popover-border-color:                 #dee2e6;
+
+$popover-header-bg:                    #f1f3fa;
+$popover-header-color:                 #dee3f3;
+$popover-header-padding-y:             .7rem;
+$popover-header-padding-x:             .8rem;
+
+$popover-body-color:                   #212529;
+$popover-body-padding-y:               .5rem;
+$popover-body-padding-x:               .75rem;
+

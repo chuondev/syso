@@ -1,0 +1,49 @@
+@charset "utf-8";
+
+.post-editor {
+    margin-top: 2rem;
+    padding: 0 2rem;
+}
+
+.editor-title {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e8e8e8;
+
+    &>input {
+        width: 100%;
+        padding: 1rem 0;
+        border: 0;
+        font-size: 20px;
+        outline: 0;
+
+    }
+}
+
+.editor-content {
+
+    &>textarea {
+        width: 100%;
+        min-height: 100%;
+        max-height: 100%;
+        border: 0;
+        outline: 0;
+    }
+}
+
+.editor-setting {
+    margin-top: 1rem;
+    border-top: 1px solid #e8e8e8;
+    
+}
+
+
+
+.editor-footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 1rem 0;
+    background: #fff;
+    box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+}

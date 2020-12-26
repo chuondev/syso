@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly>
+    <!-- 如果指定 id 标识符，则作为生成文件名称的后缀符，即目标文件是 ${artifactId}-${id}.jar -->
+    <id>build</id>
+
+    <!-- 指定打包格式：zip、tar、tar.gz (or tgz)、tar.bz2 (or tbz2)、jar、dir、war，可同时指定多个打包格式 -->
+    <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
+    </formats>
+
+    <!-- 指定打的包含有打包层目录，这样打出的压缩包可以直接解压到当前目录 -->
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <!-- 指定要包含的文件集，可以定义多个fileSet -->
+    <fileSets>
+        <fileSet>
+            <directory>src/support/file</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>sysod.bat</include>
+                <include>sysod.sh</include>
+            </includes>
+        </fileSet>
+        
+        <fileSet>
+            <directory>src/support/file</directory>
+            <outputDirectory>support</outputDirectory>
+            <includes>
+                <include>syso.service</include>
+                <include>nginx.conf</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>target/classes</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>*.xml</include>
+                <include>*.properties</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        
+        <fileSet>
+            <directory>${basedir}</directory>
+            <includes>
+                <include>LICENSE</include>
+                <include>README.md</include>
+                <include>VERSION.txt</include>
+            </includes>
+        </fileSet>
+        
+        <fileSet>
+            <outputDirectory>logs</outputDirectory>
+            <excludes><exclude>**/*</exclude></excludes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>temp</outputDirectory>
+            <excludes><exclude>**/*</exclude></excludes>
+        </fileSet>
+    </fileSets>
+</assembly>

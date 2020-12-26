@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+.init {
+  text-align: center;
+  background: $primary;
+}
+
+.syso-init {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  box-shadow: 0 0 35px 0 rgba(154,161,171,0.15);
+  
+}
+
+.syso-init-body {
+  color: #333;
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .init-user {
+    margin-bottom: 1rem;
+    padding: .5rem .75rem;
+    background: #E6EFC2;
+
+    .note {
+      margin-top: .5rem;
+      color: $red;
+    }
+  }
+ 
+}

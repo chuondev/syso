@@ -1,0 +1,23 @@
+@charset "utf-8";
+
+.post-write {
+    line-height: 70px;
+    font-weight: 700;
+
+    i {
+        font-size: 1.125rem;
+        margin-right: .25rem;
+    }
+}
+
+.syso-web {
+    font-size: 22px;
+    line-height: 70px;
+}
+
+
+.wk-table-row {
+    &.selected {
+        background-color: #FFF9E8;
+    }
+}

@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Syso static app" name="description" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="../../../../main/resources/static/images/favicon.ico">
+
+    <!-- Libs css -->
+    <link href="../../../../main/resources/static/libs/simplebar/simplebar.css" rel="stylesheet" type="text/css" />
+
+    <!-- App css -->
+    <link href="../../../../main/resources/static/fonts/mdi/css/materialdesignicons.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../main/resources/static/css/app.min.css" rel="stylesheet" type="text/css" id="light-style" />
+    
+    <title>写文章 - Powered by Syso</title>
+</head>
+<body data-layout="topnav">
+  <div class="content-page">
+    <div class="content">
+<!-- Topbar-->
+<div class="wk-navbar topnav-navbar">
+    <div class="container-fluid">
+
+        <!-- Brand -->
+        <a href="/admin" class="topnav-logo">
+            <span class="topnav-logo-lg">
+                <img src="../../../../main/resources/static/images/logo.svg" alt="" height="24">
+            </span>
+        </a>
+
+        <!-- Notification -->
+        <ul class="list-unstyled topbar-right-menu float-right mb-0">
+            
+            <li class="notification-list">
+                <a class="nav-link post-write text-primary" href="post-write.html">
+                    <i class="mdi mdi-feather"></i><span>写文章</span>
+                </a>
+            </li>
+
+            <li class="notification-list">
+                <a class="nav-link syso-web" href="../front/app-index.html" target="_blank" title="前台首页">
+                    <i class="mdi mdi-web"></i>
+                </a>
+            </li>
+
+            <li class="dropdown notification-list">
+                <a class="nav-link dropdown-toggle arrow-none" data-toggle="dropdown" href="#" id="topbar-notifydrop" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="mdi mdi-bell-outline noti-icon"></i>
+                    
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-lg" aria-labelledby="topbar-notifydrop">
+                    <!-- item-->
+                    <div class="noti-title">
+                        <h5 class="m-0">待审核评论</h5>
+                    </div>
+                      <div class="notify-item text-center">暂无数据</div>
+                </div>
+            </li>
+
+            <li class="dropdown notification-list">
+                <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" data-toggle="dropdown" id="topbar-userdrop" href="#" role="button" aria-haspopup="true"
+                    aria-expanded="false">
+                    <span class="user-avatar mr-1"> 
+                        <img src="../../../../main/resources/static/images/avatar.jpg" alt="user-image" class="rounded-circle">
+                    </span>
+                    <span>
+                        <span class="user-name">小创</span>
+                    </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated topbar-dropdown-menu profile-dropdown" aria-labelledby="topbar-userdrop">
+                    <!-- item-->
+                    <a href="profile.html" class="dropdown-item notify-item">
+                        <i class="mdi mdi-account-outline mr-1"></i>
+                        <span>账号信息</span>
+                    </a>
+
+                    <!-- item-->
+                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <i class="mdi mdi-logout mr-1"></i>
+                        <span>退出</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+        
+        <!-- Toggler -->
+        <a class="navbar-toggle" data-toggle="collapse" data-target="#topnav-menu-content">
+            <div class="lines">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </a>
+
+        <nav class="topnav navbar navbar-light navbar-expand-lg">
+            <div class="collapse navbar-collapse" id="topnav-menu-content">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html" role="button">控制台</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-posts.html" role="button">文章管理</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-resources.html" role="button">媒体资源</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-pages" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span>系统</span><div class="arrow-down"></div>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="topnav-pages">
+                            <a href="/admin" class="dropdown-item">网站设置</a>
+                            <a href="backup.html" class="dropdown-item">备份与恢复</a>
+                            <a href="devtools.html" class="dropdown-item">开发者工具</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+    </div>
+</div><form id="post-form" action="/admin/posts/new" method="post">
+<div class="container-fluid">
+    <div class="card post-editor">
+        <div class="card-body">
+            <div class="editor-title">
+              <input type="text" name="title" autocomplete="off" value="" placeholder="请输入文章标题">
+            </div>
+      
+            <div class="editor-content vh-100">
+              <textarea autocomplete="off" id="content" name="content" placeholder="输入正文 Markdown"></textarea>
+            </div>
+
+            <div class="editor-setting">
+              <label class="col-form-label col-sm-2">永久链接</label>
+              <div class="col-sm-10 mono d-flex align-items-center">
+                <span>localhost/blog/</span><input class="slug-input text-muted" type="text" name="slug" value=""><span>.html</span>
+              </div>
+            </div>
+
+        </div> <!-- end card body-->
+    </div> <!-- end card -->
+</div><!-- / .container-fluid -->
+
+<div class="editor-footer">
+    <div class="container-fluid d-flex">
+        <div class="d-flex flex-fill align-items-center post-tip fs-14">
+            <span class="post-tip-setting dropdown-toggle mr-3"><a>文章设置</a></span>
+            <span class="post-tip-save text-muted"></span>
+        </div>
+
+        <button name="action" value="publish" type="submit" class="border-primary btn btn-primary btn-sm mr-4">发布</button>
+        <button name="action" value="draft" type="submit" class="btn btn-light btn-sm mr-4">存草稿</button>
+      </div>
+</div>
+</form>
+
+<!-- Libs JS -->
+<script src="../../../../main/resources/static/libs/jquery/dist/jquery.min.js"></script>
+<script src="../../../../main/resources/static/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../../../main/resources/static/libs/simplebar/simplebar.js"></script>
+
+<!-- App JS -->
+<script src="../../../../main/resources/static/js/theme.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        "use strict";
+
+        var pathName = location.pathname;
+        $("#topnav-menu-content .nav-link").each(function () {
+            var href = $(this).attr("href");
+            if (pathName === href) {
+                $(this).parent().addClass("active");
+            } else {
+                $(this).parent().removeClass("active");
+            }
+        });
+     
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        "use strict";
+
+        $('.wk-table-row').each(function(){
+            var $row = $(this);
+            $('.select-checkbox', this).click(function() {
+               var checked = $(this).prop('checked');
+
+                if (checked) {
+                    $row.addClass('selected');
+                } else {
+                    $row.removeClass('selected');
+                    $('.select-all').prop('checked', checked);
+                }
+            });
+        })
+
+        $('.select-all').click(function() {
+            var checked = $(this).prop('checked');
+
+            if (checked) {
+                $('.wk-table-row').each(function(){
+                    var $row = $(this);
+                    $row.addClass('selected');
+                    $('.select-checkbox', $row).prop('checked', checked);
+                })
+            } else {
+                $('.wk-table-row').each(function(){
+                    var $row = $(this);
+                    $row.removeClass('selected');
+                    $('.select-checkbox', $row).prop('checked', checked);
+                })
+            }
+        });
+        
+        $('.btn-operate a').click(function() {
+            var $this = $(this), 
+                lang = $this.attr('lang');
+
+            if (!lang || confirm(lang)) {
+                $('#table-form').attr('action', $this.attr('href')).submit();
+            }
+
+            return false;
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        "use strict";
+        
+    });
+</script>
+
+</body>
+</html>

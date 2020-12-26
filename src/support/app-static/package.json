@@ -1,0 +1,14 @@
+{
+  "name": "syso-web",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run sass && npm run sass-min",
+    "sass": "node-sass scss/app.scss ../../main/resources/static/css/app.css",
+    "sass-min": "node-sass scss/app.scss ../../main/resources/static/css/app.min.css --output-style compressed",
+    "sass:watch": "npm run sass && npm run sass-min -- --watch --recursive"
+  },
+  "devDependencies": {
+    "bootstrap": "^4.4.1",
+    "node-sass": "^4.9.4"
+  }
+}

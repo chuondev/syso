@@ -1,0 +1,270 @@
+@charset "utf-8";
+
+.wk-navbar {
+    position: fixed;
+    left: 260px;
+    top: 0;
+    right: 0;
+    z-index: 1001;
+    min-height: 70px;
+    padding: 0 24px;
+    background-color: #fff;
+    box-shadow: 0 0 35px 0 rgba(154,161,171,.15);
+}
+
+.wk-navbar .topbar-left {
+    background-color: #fff;
+    height: 70px;
+    position: fixed;
+    z-index: 1;
+    width: 260px;
+    text-align: center;
+    top: 0;
+    left: 0;
+}
+
+.wk-navbar .topbar-left .logo {
+    line-height: 70px
+}
+
+.wk-navbar .topbar-left .logo i {
+    display: none
+}
+
+.wk-navbar .topbar-right-menu li {
+    float: left;
+    max-height: 70px
+}
+
+.wk-navbar .topbar-right-menu li.show .nav-link {
+    color: #919ca7
+}
+
+.wk-navbar .topbar-right-menu .nav-link {
+    padding: 0;
+    color: #98a6ad;
+    min-width: 32px;
+    display: block;
+    text-align: center;
+    margin: 0 8px;
+}
+
+.wk-navbar .app-search {
+    padding: calc(32px / 2) 0;
+    overflow: hidden
+}
+
+.wk-navbar .app-search form {
+    max-width: 320px
+}
+
+.topbar-dropdown .nav-link {
+    line-height: 70px
+}
+
+.app-search .form-control {
+    border: none;
+    height: 38px;
+    padding-left: 40px;
+    padding-right: 20px;
+    background-color: #f1f3fa;
+    -webkit-box-shadow: none;
+    box-shadow: none
+}
+
+.app-search span {
+    position: absolute;
+    z-index: 9;
+    font-size: 20px;
+    line-height: 38px;
+    left: 10px;
+    top: 0
+}
+
+.app-search .input-group-append {
+    margin-left: 0;
+    z-index: 4
+}
+
+.notification-list {
+    margin-left: 0
+}
+
+.notification-list .dropdown-menu.dropdown-menu-right {
+    transform: none!important;
+    top: 100%!important;
+    right: 0!important;
+    left: auto!important
+}
+
+.notification-list .noti-title {
+    background-color: transparent;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.notification-list .noti-icon {
+    font-size: 22px;
+    vertical-align: middle;
+    line-height: 70px
+}
+
+.notification-list .noti-icon-badge {
+    display: inline-block;
+    position: absolute;
+    top: 22px;
+    right: 18px;
+    border-radius: 50%;
+    height: 7px;
+    width: 7px;
+    background-color: #fa6767
+}
+
+.notification-list .notify-item {
+    padding: 10px 20px
+}
+
+.notification-list .notify-item .notify-icon {
+    float: left;
+    height: 36px;
+    width: 36px;
+    line-height: 36px;
+    text-align: center;
+    margin-right: 10px;
+    border-radius: 50%;
+    color: #fff
+}
+
+.notification-list .notify-item .notify-details {
+    margin-bottom: 0;
+    overflow: hidden;
+    // margin-left: 45px;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.notification-list .notify-item .notify-details b {
+    font-weight: 500
+}
+
+.notification-list .notify-item .notify-details small {
+    display: block
+}
+
+.notification-list .notify-item .notify-details span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px
+}
+
+.notification-list .notify-item .user-msg {
+    margin-left: 45px;
+    white-space: normal;
+    line-height: 16px
+}
+
+.notification-list .topbar-dropdown-menu .notify-item {
+    padding: 7px 20px
+}
+
+.profile-dropdown {
+    width: 170px
+}
+
+.profile-dropdown i,.profile-dropdown span {
+    vertical-align: middle
+}
+
+.nav-user {
+    line-height: 70px;
+    
+    span {
+        display: inline-block;
+    }
+
+    .user-avatar  img {
+        height: 32px;
+        width: 32px
+    }
+
+    .user-name {
+        vertical-align: middle;
+        font-weight: 600;
+    }
+}
+
+
+.button-menu-mobile {
+    border: none;
+    color: #474d56;
+    height: 70px;
+    line-height: 70px;
+    width: 60px;
+    background-color: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    float: left
+}
+
+.button-menu-mobile i {
+    vertical-align: middle
+}
+
+.button-menu-mobile.disable-btn {
+    display: none
+}
+
+[data-keep-enlarged=true] .wk-navbar {
+    padding-left: 0
+}
+
+[data-keep-enlarged=true] .button-menu-mobile.disable-btn {
+    display: inline-block
+}
+
+@media (max-width: 1024px) {
+    .wk-navbar {
+        left:70px;
+        right: 0
+    }
+
+    .wk-navbar .app-search {
+        display: none
+    }
+}
+
+@media (max-width: 767.98px) {
+    .wk-navbar {
+        left:0;
+        padding: 0 10px;
+        margin: -5px -10px 0
+    }
+
+    .button-menu-mobile.disable-btn {
+        display: inline-block
+    }
+
+    .nav-user {
+        // padding: 17px 5px 17px 57px!important
+    }
+
+    .nav-user .account-position,.nav-user .account-user-name {
+        display: none
+    }
+}
+
+@media (min-width: 1367px) {
+    body[data-leftbar-compact-mode=scrollable]:not([data-layout=topnav]) .wk-navbar {
+        position:absolute
+    }
+}
+
+
+
+
+
+
+
+

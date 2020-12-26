@@ -1,0 +1,473 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Syso static app" name="description" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="../../../../main/resources/static/app/app-favicon.ico">
+
+    <!-- App css -->
+    <link href="../../../../main/resources/static/fonts/mdi/css/materialdesignicons.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../main/resources/static/css/app.min.css" rel="stylesheet" type="text/css" id="light-style" />
+
+    <title>Tomcat 对 HTTP 协议的实现（上） | Powered by Syso</title>
+</head>
+
+<body data-layout="topnav">
+<div class="content-page">
+    <div class="content">
+        <!-- Topbar-->
+        <div class="wk-navbar topnav-navbar">
+            <div class="container-fluid">
+
+                <!-- Brand -->
+                <a href="app-index.html" class="topnav-logo mr-3">
+                    <img src="../../../../main/resources/static/app/app-logo.svg" alt="" height="24">
+                </a>
+
+                <!-- Toggler -->
+                <a class="navbar-toggle" data-toggle="collapse" data-target="#topnav-menu-content">
+                    <div class="lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </a>
+
+                <nav class="topnav navbar navbar-light navbar-expand-lg">
+                    <div class="collapse navbar-collapse" id="topnav-menu-content">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="app-index.html"role="button">首页</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="app-index.html"role="button">项目·产品</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+            </div>
+        </div>
+
+<!-- Main Content-->
+<div class="container-fluid syso-main">
+    <div class="row">
+        <div class="col-xl-9 col-lg-9">
+            <div class="card">
+                <div class="post-view">
+                    <div class="post-view-title">
+                        <h1>Tomcat 对 HTTP 协议的实现（上）</h1>
+                        <ul class="nav small dot-list mt-1">
+                            <li><span class="text-muted">2020-06-24 21:22</span></li>
+                            <li><span class="text-muted">阅读 67</span></li>
+                        </ul>
+                    </div>
+
+                    <div id="archive-content" class="syso-markdown mb-4">
+                    <p>[TOC]
+协议，直白的说就是存在一堆字节，按照协议指定的规则解析就能得出这堆字节的意义。HTTP 解析分为两个部分：解析请求头和请求体。</p>
+<p>请求头解析的难点在于它没有<strong>固定长度的头部</strong>，也不像其他协议那样提供数据包长度字段，判断是否读取到一个完整的头部的唯一依据就是遇到一个仅包括回车换行符的<strong>空行</strong>，好在在找寻这个空行的过程中能够完成请求行和头域的分析。</p>
+<p>请求体的解析就是按照头域的<strong>传输编码</strong>和<strong>内容编码</strong>进行解码。那么 Tomcat 是如何设计和实现 HTTP 协议的呢？</p>
+<h2 id="1-请求头的解析">1. 请求头的解析</h2>
+<p>请求头由 Ascii 码组成，包含请求行和请求头域两个部分，下面是一个简单请求的字符串格式：</p>
+<pre><code class="language-html">POST /index.jsp?a=1&amp;b=2 HTTP/1.1\r\n
+Host: localhost:8080\r\n
+Connection: keep-alive
+Content-Length: 43
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Accept:*/*\r\n
+Accept-Encoding: chunked, gzip\r\n
+\r\n
+account=Rvcg%3D%3D&amp;passwd=f63ebe&amp;salt=vpwMy
+</code></pre>
+<p>解析过程的本质就是遍历这些字节，以空格、回车换行符和冒号为分隔符提取内容。在具体实现时，Tomcat 使用的是一种<strong>有限状态机</strong>的编程方法，状态机在非阻塞和异步编程中很重要，因为如果因数据不完整导致处理中断，在读取更多数据后，可以很方便的从中断的地方继续。Tomcat 对请求行和头域分别设计了各种解析状态。</p>
+<h3 id="11-解析请求行的状态">1.1 解析请求行的状态</h3>
+<p>InternalNioInputBuffer 有一个成员变量 parsingRequestLinePhase，它的不同值表示不同的解析阶段：</p>
+<ul>
+<li>0: 表示解析开始前跳过空行</li>
+<li>2: 开始解析请求方法</li>
+<li>3: 跳过请求方法和请求uri之间的空格或制表符</li>
+<li>4: 开始解析请求URI</li>
+<li>5: 与3相同</li>
+<li>6: 解析协议版本，如 HTTP/1.1</li>
+</ul>
+<h3 id="12-解析请求头域的状态">1.2 解析请求头域的状态</h3>
+<p>解析头域信息设计了两种状态，分别是 HeaderParseStatus 和 HeaderParsePosition。HeaderParseStatus 表示整个头域解析的情况，它有三个值：</p>
+<ul>
+<li>DONE: 表示整个头域解析结束</li>
+<li>HAVE_MORE_HEADERS: 解析完一个 header的 name-value，开始解析下一个</li>
+<li>NEED_MORE_DATA: 表示头域数据不完整需要继续从通道读取</li>
+</ul>
+<p>HeaderParseStatus 表示一个 Header 的 name-value 解析的状态，它有6个状态：</p>
+<ul>
+<li>HEADER_START：开始解析新的 Header，如果读取到了一个 \r\n，即遇到空行，整个解析结束</li>
+<li>HEADER_NAME：解析 Header 的名称</li>
+<li>HEADER_VALUE_START：此状态是为了跳过 name 和 value 之间的空格</li>
+<li>HEADER_VALUE：解析 Header 的值</li>
+<li>HEADER_MULTI_LINE：解析value后，如果新的一行开始的字符为 LWS（线性空白 - 空格、制表符），表示上一个value占多行</li>
+<li>HEADER_SKIPLINE：解析名称时遇到非法的字符，跳过这一行，忽略这个 Header</li>
+</ul>
+<h3 id="13-实现">1.3 实现</h3>
+<p>这块的代码实现分别在 InternalNioInputBuffer 的 parseRequestLine、parseHeaders 和 parseHeader 方法中，具体的代码注释这里不在贴出，原理就是遍历字节数组按状态取值。</p>
+<p>那请求元素如何表示？整个解析过程都是在操作字节数组，一个简单的做法是直接转字符串存储，而 Tomcat 为了节省内存，设计了一个 MessageBytes 类，它用于表示底层 byte[] 子字节数组的视图，只在有需要的时候才转为字符串，并缓存，后续的读取操作也是尽可能的<strong>减少内存复制</strong>。</p>
+<p>从通道读取数据的功能，由 InternalNioInputBuffer 的 fill 和 readSocket 方法完成。fill 方法主要做一些逻辑判断，读取请求体时，重置 pos 位置，以重复使用请求头数据后的缓冲区，具体代码如下：</p>
+<pre><code class="language-java">protected boolean fill(boolean timeout, boolean block) 
+                    throws IOException, EOFException {
+  // 尝试将一些数据读取到内部缓冲区              
+  boolean read = false; // 是否有数据读取
+  if (parsingHeader) { // 如果当前处于解析请求头域的状态
+    if (lastValid == buf.length) {
+    // 判断已读字节是否超过缓冲区的大小
+    // 这里应该使用 headerBufferSize 而不是 buf.length
+      throw new IllegalArgumentException(&quot;Request header is too large&quot;);
+    }
+    // 从通道读取数据
+    read = readSocket(timeout,block)&gt;0;
+  } else {
+    // end 请求头数据在缓冲区结束的位置下标，也是请求体数据开始的下标
+    lastValid = pos = end; // 重置 pos 的位置，重复利用 end 后的缓冲区
+    read = readSocket(timeout, block)&gt;0;
+  }
+  return read;
+}
+</code></pre>
+<p>readSocket 执行读取操作，它有两种模式，阻塞读和非阻塞读：</p>
+<pre><code class="language-java">private int readSocket(boolean timeout, boolean block) throws IOException {
+  int nRead = 0; // 读取的字节数
+  socket.getBufHandler().getReadBuffer().clear(); // 重置 NioChannel 中的读缓冲区
+  if ( block ) { // true 模拟阻塞读取请求体数据
+    Selector selector = null;
+    try { selector = getSelectorPool().get(); }catch ( IOException x ) {}
+    try {
+      NioEndpoint.KeyAttachment att = (NioEndpoint.KeyAttachment)socket.getAttachment(false);
+      if ( att == null ) throw new IOException(&quot;Key must be cancelled.&quot;);
+      nRead = getSelectorPool().read(socket.getBufHandler().getReadBuffer(),
+                        socket,selector,att.getTimeout());
+    } catch ( EOFException eof ) { nRead = -1;
+    } finally {
+      if ( selector != null ) getSelectorPool().put(selector);
+    }
+  } else { // false 非阻塞读取请求头数据
+    nRead = socket.read(socket.getBufHandler().getReadBuffer());
+  }
+  if (nRead &gt; 0) {
+    // 切换读取模式
+    socket.getBufHandler().getReadBuffer().flip();
+    socket.getBufHandler().getReadBuffer().limit(nRead);
+    expand(nRead + pos); // 缓冲区没有必要扩展，高版本已移除
+    socket.getBufHandler().getReadBuffer().get(buf, pos, nRead);
+    lastValid = pos + nRead;
+    return nRead;
+  } else if (nRead == -1) { // 客户端关闭连接
+    //return false;
+    throw new EOFException(sm.getString(&quot;iib.eof.error&quot;));
+  } else { // 读取 0 个字节，说明通道数据还没准备好，继续读取
+    return 0;
+  }
+}
+</code></pre>
+<h2 id="2-请求体读取">2. 请求体读取</h2>
+<p>Tomcat 把请求体的读取和解析延迟到了 Servlet 读取请求参数的时候，此时的请求已经从 Connector 进入了 Container，需要再次从底层通道读取数据，来看下 Tomcat 是怎么设计的（可右键直接打开图片查看大图）：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1424165/201904/1424165-20190419181223136-60755127.jpg" alt="Tomcat HTTP 请求体解析类图" /></p>
+<p>上面的类图包含了处理请求和响应的关键类、接口和方法，其中 <strong>ByteChunk</strong> 比较核心，有着承上启下的作用，它内部有 ByteInputChannel 和 ByteOutputChannel 两个接口，分别用于实际读取和实际写入的操作。请求体数据读取过程的方法调用如下（可右键直接打开图片查看大图）：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1424165/201904/1424165-20190417193322023-774640233.png" alt="Tomcat HTTP 请求体解析方法序列图" /></p>
+<h3 id="21-identity-body-编码">2.1 identity-body 编码</h3>
+<p>identity 是定长解码，直接按照 Content-Length 的值，读取足够的字节就可以了。IdentityInputFilter 用一个成员变量 remaining 来控制是否读取了指定长度的数据，核心代码如下：</p>
+<pre><code class="language-java">public int doRead(ByteChunk chunk, Request req) throws IOException {
+  int result = -1; // 返回 -1 表示读取完毕
+  if (contentLength &gt;= 0) {
+    if (remaining &gt; 0) {
+      // 使用 ByteChunk 记录底层数组读取的字节序列
+      int nRead = buffer.doRead(chunk, req);
+      if (nRead &gt; remaining) { // 读太多了
+        // 重新设置有效字节序列
+        chunk.setBytes(chunk.getBytes(), chunk.getStart(), (int) remaining);
+        result = (int) remaining;
+      } else {
+          result = nRead;
+      }
+      if (nRead &gt; 0) {
+        // 计算还要在读多少字节，可能为负数
+        remaining = remaining - nRead;
+      }
+    } else {
+      // 读取完毕，重置 ByteChunk
+      chunk.recycle();
+      result = -1;
+    }
+  }
+  return result;
+}
+</code></pre>
+<p>InputFilter 里的 buffer 引用的是 InternalNioInputBuffer 的内部类 SocketInputBuffer，它的作用就是控制和判断是否读取结束，实际的读取操作以及存储读取的内容都还是由 InternalNioInputBuffer 完成。一次读取完毕，容器通过 ByteChunk 类记录底层数组的引用和有效字节的位置，拉取实际的字节和判断是否还要继续读取。</p>
+<h3 id="22-chunked-body-编码">2.2 chunked-body 编码</h3>
+<p>chunked 是用于不确定请求体大小时的传输编码，解码读取的主要工作就是一直解析 chunk 块直到遇到一个大小为 0 的 Data chunk。rfc2616#section-3.6.1 中定义了 chunk 的格式：</p>
+<pre><code class="language-html">Chunked-Body   = *chunk
+                last-chunk
+                trailer
+                CRLF
+
+chunk          = chunk-size [ chunk-extension ] CRLF
+                chunk-data CRLF
+chunk-size     = 1*HEX
+last-chunk     = 1*(&quot;0&quot;) [ chunk-extension ] CRLF
+
+chunk-extension= *( &quot;;&quot; chunk-ext-name [ &quot;=&quot; chunk-ext-val ] )
+chunk-ext-name = token
+chunk-ext-val  = token | quoted-string
+chunk-data     = chunk-size(OCTET)
+trailer        = *(entity-header CRLF)
+</code></pre>
+<p>其中，关键字段的意义是：</p>
+<ul>
+<li><strong>chunk-size</strong>：是<strong>小写</strong> 16 进制数字字符串，表示 chunk-data 的大小，比如 15 的十六进制是 f，字符 'f' 的 ASCII 是 0x66，所以数字 15 就被编码成了 0x66</li>
+<li>chunk-extension：一个或多个以逗号分割放在 chunk-size 后面的扩展选项</li>
+<li>trailer：额外的 HTTP 头域</li>
+</ul>
+<p>下面是一个尽可能展示上面的定义的 chunked 编码的例子：</p>
+<pre><code class="language-html">HTTP/1.1 200 OK\r\n
+Content-Type: text/html\r\n
+Transfer-Encoding: chunked\r\n
+Content-Encoding: gzip\r\n
+Trailer: Expires\r\n
+\r\n
+Data chunk (15 octets)
+  size: 66 0d 0a
+  data: xx xx xx xx 0d 0a
+Data chunk (4204 octets)
+  size: 4204;ext-name=ext-val\r\n
+Data chunk (3614 octets)
+Data chunk (0 octets)
+  size: 0d 0a
+  data: 0d 0a
+Expires: Wed, 21 Jan 2016 20:42:10 GMT\r\n
+\r\n
+</code></pre>
+<p>rfc2616 中提供了一个解码 chunked 传输编码的伪代码：</p>
+<pre><code class="language-java">length := 0 
+read chunk-size, chunk-extension （if any） and CRLF 
+while （chunk-size &gt; 0） { 
+  read chunk-data and CRLF 
+  append chunk-data to entity-body 
+  length := length + chunk-size 
+  read chunk-size and CRLF 
+} 
+read entity-header 
+while （entity-header not empty） { 
+  append entity-header to existing header fields 
+  read entity-header 
+} 
+Content-Length := length 
+Remove &quot;chunked&quot; from Transfer-Encoding 
+</code></pre>
+<p>逻辑还是比较清晰的，有问题可留言交流。Tomcat 实现 chunked 编码解析读取的类是 ChunkedInputFilter，来分析一下核心代码的实现，整个解析逻辑都在 doRead 方法中：</p>
+<pre><code class="language-java">public int doRead(ByteChunk chunk, Request req) throws IOException {
+    if (endChunk) {// 是否读取到了最后一个 chunk
+      return -1; // -1 表示读取结束
+  }
+  checkError();
+  if(needCRLFParse) {// 读取一个 chunk 前，是否需要解析 \r\n
+      needCRLFParse = false;
+      parseCRLF(false);
+  }
+  if (remaining &lt;= 0) {
+      if (!parseChunkHeader()) { // 读取 chunk-size 
+          throwIOException(sm.getString(&quot;chunkedInputFilter.invalidHeader&quot;));
+      }
+      if (endChunk) {// 如果是最后一个块
+          parseEndChunk();// 处理 Trailing Headers
+          return -1;
+      }
+  }
+  int result = 0;
+  if (pos &gt;= lastValid) { // 从通道读取数据
+      if (readBytes() &lt; 0) {
+          throwIOException(sm.getString(&quot;chunkedInputFilter.eos&quot;));
+      }
+  }
+  // lastValid - pos 的值是读取的字节数
+  if (remaining &gt; (lastValid - pos)) {
+      result = lastValid - pos;
+      // 还剩多少要读取
+      remaining = remaining - result;
+      // ByteChunk 记录读取的数据
+      chunk.setBytes(buf, pos, result);
+      pos = lastValid;
+  } else {
+      result = remaining;
+      chunk.setBytes(buf, pos, remaining); // 记录读取的数据
+      pos = pos + remaining;
+      remaining = 0;
+      
+      // 这时已经完成 chunk-body 的读取，解析 \r\n
+      if ((pos+1) &gt;= lastValid) {
+          // 此时如果调用 parseCRLF 就会溢出缓冲区，接着会触发阻塞读取
+          // 将解析推迟到下一个读取事件
+          needCRLFParse = true;
+      } else {
+        // 立即解析 CRLF
+          parseCRLF(false); //parse the CRLF immediately
+      }
+  }
+  return result;
+}
+</code></pre>
+<p>parseChunkHeader 就是读取并计算 chunk-size，对于扩展选项，Tomcat只是简单忽略：</p>
+<pre><code class="language-java">// 十六进制字符转十进制数的数组，由 ASCII 表直接得来
+private static final int[] DEC = {
+    00, 01, 02, 03, 04, 05, 06, 07,  8,  9, -1, -1, -1, -1, -1, -1,
+    -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, 10, 11, 12, 13, 14, 15,
+};
+public static int getDec(int index){
+  return DEC[index - '0'];
+}
+protected boolean parseChunkHeader() throws IOException {
+  ...
+  int result = 0;
+  // 获取字符对应的十进制数
+  int charValue = HexUtils.getDec(buf[pos]);
+  if (charValue != -1 &amp;&amp; readDigit &lt; 8) {
+    readDigit++;
+    // 一个16进制数 4bit，左移4位合并低4位
+    // 相当于 result = result * 16 + charValue;
+    result = (result &lt;&lt; 4) | charValue;
+  }
+  ...
+}
+</code></pre>
+<h2 id="3-请求参数的解析">3. 请求参数的解析</h2>
+<p>服务端接收到的参数形式可能有这种特殊格式：</p>
+<pre><code class="language-html">tonwu.net/search?scope=b%20bs&amp;q=%E5%88%9B
+account=Rvcg%3D%3D&amp;passwd=f63ebe&amp;salt=vpwMy
+</code></pre>
+<p>这样的解析就涉及到了编码问题，GET 和 POST 请求的编码方法由页面设置的编码决定，也就是 &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;charset=utf-8&quot;。如果 URL 中有查询参数，并且包含特殊字符或中文，就会使用它们的编码，格式为：%加字符的 ASCII 码，下面是一些常用的特殊符号和编码：</p>
+<pre><code class="language-html">%2B   +     表示空格
+%20   空格  也可使用 + 和编码
+%2F   /     分割目录和子目录
+%3F   ?     分割URI和参数
+%25   %     指定特殊字符
+%23   #     锚点位置
+%26   &amp;     参数间的分隔符
+%3D   =     参数赋值
+</code></pre>
+<p>Tomcat 对请求参数解析的代码在 Parameters 类的 processParameters 方法中，其中要注意的是对 % 编码的处理，因为%后面跟的是实际数值的<strong>大写</strong>的16进制数字字符串，就和chunk-size类似要进行一次转换。</p>
+<p>由于篇幅的原因下一篇将会继续分析 HTTP 响应的处理。本文首发于（微信公众号：<strong>顿悟源码</strong>）</p>
+<h2 id="小结">小结</h2>
+<p>本文对请求头和请求体的读取和解析进行了分析。为了简单直观的理解具体的处理流程，尽可能的使用简洁的代码仿写了这部分功能。</p>
+<p><strong>源码地址</strong>：https://github.com/tonwu/rxtomcat 位于 <strong>rxtomcat-http</strong> 模块</p>
+
+                    </div>
+                  <div class="mb-3"><strong>最后更新时间：2020-06-24 21:22</strong></div>
+                  <div class="copy-text">
+                      <div>本文由 <a href="https://www.chuonye.com/">小创</a> 创作，采用 <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="external nofollow">知识共享署名4.0</a> 国际许可协议进行许可。</div>
+                      <div>本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。</div>
+                  </div>
+
+                    <div class="mt-4">
+                        <div class="text-muted mb-1">
+                            <span>上一篇: </span><a href="post-show.html">Tomcat 对 HTTP 协议的实现（下）</a>
+                        </div>
+                        <div class="text-muted ">
+                            <span>下一篇: </span>没有了
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+
+        <div class="col-xl-3 col-lg-3">
+            <div class="post-catalog">
+                <div class="catalog-title">目录</div>
+                <div class="catalog-body">
+                    <ul class="catalog-list"></ul>
+                </div>
+            </div>
+        </div> <!-- end col-->
+        
+    </div><!-- / .row -->
+</div><!-- / .container-fluid -->
+
+</div>  <!-- / .content -->
+
+    <footer class="footer text-center">©2020 Syso - Chuonye.com</footer>
+
+</div> <!-- / .content-page -->
+
+<!-- Libs JS -->
+<script src="../../../../main/resources/static/libs/jquery/dist/jquery.min.js"></script>
+
+<!-- App JS -->
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        "use strict";
+        function checkLocation() {
+            if (window.scrollY > 90) {
+                var width = $('.post-catalog').width();
+                $('.post-catalog').addClass('catalog-sticky').width(width);
+            } else {
+                $('.post-catalog').removeClass('catalog-sticky').width("");
+            }
+        }
+        checkLocation();
+        $(window).scroll(function() {
+            checkLocation();
+        });
+
+        var tocArr = [], subArr = [];
+        var parent = 0, child = 0, expect = 0;
+        $("h2,h3", $('#archive-content')).each(function(idx, el) {
+            if (this.localName === 'h2') {
+                if (expect == 1) {
+                    parent += 1;
+                } else if (expect == 2) {
+                    tocArr[parent].c = subArr;
+                    subArr = [];
+                    parent += 1;
+                }
+
+                tocArr[parent] = {};
+                tocArr[parent].p = this;
+                expect = 1;
+                child = 0;
+            } else if (this.localName === 'h3') {
+                subArr[child++] = this;
+                expect = 2;
+            }
+        });
+
+        var toc = '';
+        for(var i=0;i<tocArr.length;i++){
+            toc += '<li class="item d1">';
+            toc += '<a href="#' + tocArr[i].p.id + '">' + tocArr[i].p.innerText + '</a>';
+            if (undefined != tocArr[i].c && tocArr[i].c.length > 0) {
+                toc += '<ul class="sub-list">';
+                for(var j=0;j<tocArr[i].c.length;j++){
+                    toc += '<li class="item d2">';
+                    toc += '<a href="#' + tocArr[i].c[j].id + '">' + tocArr[i].c[j].innerText + '</a>';
+                    toc += '</li>';
+                }
+                toc += '</ul>';
+            }
+            toc += '</li>';
+        }
+        $('.catalog-list').html(toc);
+
+        $('.catalog-list .item').click(function (e) {
+            $('.catalog-list .item').removeClass('active');
+            $(this).addClass('active');
+            e.stopPropagation();
+        });
+
+    });
+</script>
+
+</body>
+</html>

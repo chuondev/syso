@@ -1,0 +1,78 @@
+@charset "utf-8";
+
+.fs-12 {
+  font-size: 12px !important;
+}
+
+.fs-13 {
+  font-size: 13px !important;
+}
+
+.fs-14 {
+  font-size: 14px !important;
+}
+
+.fs-15 {
+  font-size: 15px !important;
+}
+
+.fs-16 {
+  font-size: 16px !important;
+}
+
+.fs-17 {
+  font-size: 17px !important;
+}
+
+.fs-18 {
+  font-size: 18px !important;
+}
+
+.mono {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.zindex-100 {
+  z-index: 100;
+}
+
+.input-required {
+  &:before {
+    display: inline-block;
+    margin-right: 4px;
+    color: #f5222d;
+    font-size: 14px;
+    font-family: SimSun,sans-serif;
+    line-height: 1;
+    content: "*";
+  }
+}
+
+.arrow-none:after {
+    display: none;
+}
+
+.arrow-down {
+    display: inline-block;
+
+    &:after {
+        display: inline-block;
+        top: 50%;
+        right: 5px;
+        height: .4em;
+        width: .4em;
+        margin-left: 10px;
+        content: "";
+        border-color: initial;
+        border-style: solid;
+        border-width: 0 0 1px 1px;
+        transform: perspective(1px) rotate(-45deg) translateY(-50%);
+        transform-origin: top;
+        transition: all .3s ease-out;
+    }
+}
+

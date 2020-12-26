@@ -1,0 +1,219 @@
+@charset "utf-8";
+ 
+.left-side-menu {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    padding-top: 70px;
+    z-index: 10;
+    background: #313a46;
+    transition: all .2s ease-out;
+    box-shadow: 0 0 35px 0 rgba(154,161,171,.15);
+}
+
+.logo {
+    display: block;
+    position: fixed;
+    top: 0;
+    width: 260px;
+    line-height: 70px;
+
+    .logo-lg {
+        display: block;
+    }
+
+    .logo-sm {
+        display: none;
+    }
+
+    &.logo-light {
+        display: block;
+    }
+
+    &.logo-dark {
+        display: none;
+    }
+}
+
+.side-nav {
+    .side-nav-link {
+        position: relative;
+        display: block;
+        padding: 10px 30px;
+        font-size: .9375rem;
+        color: #8391a2;
+        transition: all .4s;
+
+        &:hover,
+        &:focus,
+        &:active {
+            color: #bccee4;
+            text-decoration: none;
+        }
+
+        span {
+            vertical-align: middle;
+        }
+
+        i {
+            display: inline-block;
+            width: 20px;
+            margin: 0 10px 0 0;
+            vertical-align: middle;
+            line-height: 1.0625rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    .menu-arrow {
+        position: absolute;
+        display: inline-block;
+        right: 30px;
+        font-family: 'Material Design Icons';
+        text-rendering: auto;
+        line-height: 1.5rem;
+        font-size: 1.1rem;
+        transition: transform .15s;
+        transform: translate(0,0);
+
+        &:before {
+            content: "\F142";
+        }
+    }
+
+    .badge {
+        margin-top: 3px
+    }
+
+    .side-nav-item.mm-active>a .menu-arrow {
+        transform: rotate(90deg)
+    }
+
+     .side-nav-title {
+        padding: 12px 30px;
+        letter-spacing: .05em;
+        pointer-events: none;
+        cursor: default;
+        font-size: .6875rem;
+        text-transform: uppercase;
+        color: #8391a2;
+        font-weight: 700;
+    }
+
+    .mm-active>a {
+        color: #fff!important
+    }
+}
+
+@media (max-width: 767.98px) {
+    body {
+        overflow-x:hidden
+    }
+
+    .left-side-menu {
+        box-shadow: 0 0 35px 0 rgba(154,161,171,.15);
+        display: none;
+        z-index: 10!important;
+    }
+
+    .sidebar-enable .left-side-menu {
+        display: block
+    }
+
+    .navbar-nav.navbar-right {
+        float: right
+    }
+
+    .content-page {
+        margin-left: 0!important;
+        padding: 65px 10px 65px
+    }
+
+    body[data-leftbar-compact-mode=condensed] .left-side-menu {
+        margin-left: -70px
+    }
+
+    .logo span.logo-lg {
+        display: block
+    }
+
+    .logo span.logo-sm {
+        display: none
+    }
+}
+
+
+body[data-layout=topnav] .content-page {
+    margin-left: 0!important;
+    padding: 0 0 60px 0
+}
+
+@media (min-width: 1367px) {
+    body[data-leftbar-compact-mode=scrollable]:not([data-layout=topnav]) {
+        padding-bottom:0
+    }
+
+    body[data-leftbar-compact-mode=scrollable]:not([data-layout=topnav]) .wrapper {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex
+    }
+
+    body[data-leftbar-compact-mode=scrollable]:not([data-layout=topnav]) .left-side-menu {
+        position: relative;
+        min-width: 260px;
+        max-width: 260px;
+        padding-top: 0
+    }
+
+    body[data-leftbar-compact-mode=scrollable]:not([data-layout=topnav]) .logo {
+        position: relative;
+        margin-top: 0
+    }
+
+    body[data-leftbar-compact-mode=scrollable]:not([data-layout=topnav]) .content-page {
+        margin-left: 0;
+        width: 100%;
+        padding-bottom: 60px
+    }
+}
+
+
+
+@media (min-width: 992px) {
+    body[data-layout=detached] .container-fluid,body[data-layout=detached] .container-lg,body[data-layout=detached] .container-md,body[data-layout=detached] .container-sm,body[data-layout=detached] .container-xl {
+        max-width:95%
+    }
+}
+
+.button-menu-mobile .lines {
+    width: 18px;
+    display: block;
+    position: relative;
+    height: 16px;
+    -webkit-transition: all .5s ease;
+    transition: all .5s ease;
+    margin-top: 26px;
+    margin-left: 10px
+}
+
+.button-menu-mobile span {
+    height: 2px;
+    width: 100%;
+    background-color: rgba(255,255,255,.8);
+    display: block;
+    margin-bottom: 5px;
+    -webkit-transition: -webkit-transform .5s ease;
+    transition: -webkit-transform .5s ease;
+    transition: transform .5s ease;
+    transition: transform .5s ease,-webkit-transform .5s ease
+}
+
+.button-menu-mobile span:nth-of-type(2) {
+    width: 24px
+}
+
+.button-menu-mobile.disable-btn {
+    display: none
+}
