@@ -36,8 +36,6 @@ public class CacheViewStore {
     
     @Async
     @Scheduled(cron = "${app.view.cron}")
-//    @Scheduled(cron = "0 0 2 * * ?") // 每天上午 02:00:00 执行
-//    @Scheduled(cron = "0/5 * * * * ?")
     public void cacheViewStore() {
         Cache viewCache = cacheManager.getCache(PostService.CACHE_POST_VIEWS);
         Cache userCache = cacheManager.getCache(PostService.CACHE_USERS);
