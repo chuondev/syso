@@ -8180,15 +8180,21 @@ body[data-layout=topnav] .container-xl {
       color: #ff4136; }
 
 .notice {
+  position: absolute;
+  width: 100%;
   padding: .75rem 1.25rem;
+  z-index: 100;
   font-size: .875rem;
+  text-align: center;
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1); }
-  .notice .notice-error {
-    background: #fee1e1;
-    color: #823636; }
-  .notice .notice-success {
-    background: #d5f5d9;
-    color: #186a21; }
+
+.notice-error {
+  background: #fee1e1;
+  color: #823636; }
+
+.notice-success {
+  background: #d5f5d9;
+  color: #186a21; }
 
 .post-write {
   line-height: 70px;
@@ -8336,6 +8342,10 @@ body[data-layout=topnav] .container-xl {
 .syso-markdown pre {
   background: #ddd;
   padding: .5rem; }
+
+.syso-markdown ol,
+.syso-markdown ul {
+  padding-left: 2rem; }
 
 .syso-main {
   margin-top: 1rem; }

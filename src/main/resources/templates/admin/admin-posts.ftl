@@ -61,8 +61,13 @@
                                 <#list posts.content as post>
                                   <tr class="wk-table-row">
                                       <td><input type="checkbox" class="select-checkbox" value="${post.id}" name="postId[]"></td>
-                                      <td><a target="_blank" href="/archives/${post.slug}.html">${post.title}</a></td>
-                                      <td>${(post.status == 0)?then('已发布','草稿')}</td>
+                                      <#if post.status == 0>
+                                          <td><a target="_blank" href="/archives/${post.slug}.html">${post.title}</a></td>
+                                          <td>已发布</td>
+                                      <#else>
+                                          <td>${post.title}<a class="ml-1 small" target="_blank" href="/admin/posts/preview/${post.id}">预览</a></td>
+                                          <td>草稿</td>
+                                      </#if>    
                                       <td>${post.views}</td>
                                       <td><@common.timeline time="${post.updateTime}"?datetime /></td>
                                       <td class="table-action">

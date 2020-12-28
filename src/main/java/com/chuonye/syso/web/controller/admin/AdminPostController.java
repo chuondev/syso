@@ -63,10 +63,15 @@ public class AdminPostController extends AbstractController {
             noticeFail(bindingResult.getAllErrors().toString());
             return "admin/post-write";
         } else {
-            postService.addPost(postForm, null);
+            Post post = postService.addPost(postForm, null);
             
-            noticeOk("新增文章成功");
-            return "redirect:/admin/posts";
+            if (post.getStatus() == 0) {
+                noticeOk("发布成功");
+                return "redirect:/admin/posts";
+            } else {
+                noticeOk("保存成功");
+                return "redirect:/admin/posts/modify/" + post.getId();
+            }
         }
     }
 
@@ -75,11 +80,16 @@ public class AdminPostController extends AbstractController {
             Model model) {
         Post post = postService.getPost(postId);
         if (!bindingResult.hasErrors()) {
-            postService.updatePost(post, postForm);
+            post =postService.updatePost(post, postForm);
         }
-
-        noticeOk("更新成功");
-        return "redirect:/admin/posts";
+        
+        if (post.getStatus() == 0) {
+            noticeOk("发布成功");
+            return "redirect:/admin/posts";
+        } else {
+            noticeOk("保存成功");
+            return "redirect:/admin/posts/modify/" + post.getId();
+        }
     }
 
     @GetMapping("/remove/{postId:[0-9]+}")
@@ -120,5 +130,12 @@ public class AdminPostController extends AbstractController {
         
         noticeOk("文章[" + post.getTitle() + "]导入成功");
         return "redirect:/admin/posts";
+    }
+    
+    @GetMapping("/preview/{postId:[0-9]+}")
+    public String getPost(Model model, @PathVariable Integer postId) {
+        Post post = postService.getPost(postId);
+        model.addAttribute("post", post);
+        return "app/post-show";
     }
 }

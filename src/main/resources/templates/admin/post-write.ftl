@@ -5,11 +5,11 @@
     <div class="card post-editor">
         <div class="card-body">
             <div class="editor-title">
-              <input type="text" name="title" autocomplete="off" value="${post.title!}" placeholder="请输入文章标题">
+              <input type="text" name="title" autocomplete="off" value="${post.title!}" placeholder="请输入文章标题" required>
             </div>
       
             <div class="editor-content vh-100">
-              <textarea autocomplete="off" id="content" name="content" placeholder="输入正文 Markdown">${post.rawContent!}</textarea>
+              <textarea autocomplete="off" id="content" name="content" placeholder="输入正文 Markdown" required>${post.rawContent!}</textarea>
             </div>
 
             <div class="editor-setting">
@@ -32,6 +32,9 @@
 
         <button name="action" value="published" type="submit" class="border-primary btn btn-primary btn-sm mr-4">发布</button>
         <button name="action" value="draft" type="submit" class="btn btn-light btn-sm mr-4">存草稿</button>
+        <#if post.id??>
+        <a class="btn btn-light btn-sm" target="_blank" href="/admin/posts/preview/${post.id}">预览</a>
+        </#if>
       </div>
 </div>
 </form>
