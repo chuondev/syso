@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +33,6 @@ public class CacheViewStore {
         this.cacheManager = cacheManager;
     }
     
-    @Async
     @Scheduled(cron = "${app.view.cron}")
     public void cacheViewStore() {
         Cache viewCache = cacheManager.getCache(PostService.CACHE_POST_VIEWS);
