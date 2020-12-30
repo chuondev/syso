@@ -1,5 +1,5 @@
 <#include "_macros.ftl">
-<@header title="管理首页" />
+<@header title="媒体资源" />
 <div class="container-fluid">
 
     <!-- Page title -->

@@ -1,5 +1,5 @@
 <#include "_macros.ftl">
-<@header title="账号设置" />
+<@header title="备份与恢复" />
 <div class="container-fluid">
     <!-- Page title -->
     <div class="row">

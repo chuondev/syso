@@ -1,5 +1,5 @@
 <#include "_macros.ftl">
-<@header title="账号设置" />
+<@header title="开发者工具" />
 <div class="container-fluid">
         <!-- Page title -->
     <div class="row">
