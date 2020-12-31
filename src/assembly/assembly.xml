@@ -27,10 +27,9 @@
         <fileSet>
             <directory>src/support/file</directory>
             <outputDirectory>support</outputDirectory>
-            <includes>
-                <include>syso.service</include>
-                <include>nginx.conf</include>
-            </includes>
+            <excludes>
+                <exclude>sysod.*</exclude>
+            </excludes>
         </fileSet>
 
         <fileSet>
