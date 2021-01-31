@@ -142,6 +142,12 @@
                       </li>
                       <li class="list-group-item">
                         <div class="row">
+                            <div class="col-2">服务器IP地址</div>
+                            <div class="col-10">${env.address}</div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row">
                             <div class="col-2">JVM</div>
                             <div class="col-10">${env.jvm}</div>
                         </div>

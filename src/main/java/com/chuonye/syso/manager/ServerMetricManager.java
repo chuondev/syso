@@ -15,6 +15,7 @@ import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint.MetricResponse;
 import org.springframework.stereotype.Component;
 
+import com.chuonye.syso.utils.HostUtil;
 import com.chuonye.syso.utils.Tools;
 
 /**
@@ -137,6 +138,7 @@ public class ServerMetricManager {
         
         metrics.put("osName", systemProps("os.name"));
         metrics.put("osArch", systemProps("os.arch"));
+        metrics.put("address", HostUtil.getLocalHostAddress().toString());
         
         metrics.put("jvm", systemProps("java.vm.name") + " (" + systemProps("java.vm.version") + "，" + systemProps("java.vm.info") + ")");
         metrics.put("javaVersion", systemProps("java.version"));
