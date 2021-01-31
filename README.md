@@ -42,18 +42,8 @@ Syso 是一个简单的个人博客系统 https://www.chuonye.com/
  shell> tar zxvf /path/to/syso-VERSION.tar.gz
  shell> cd /usr/local
  shell> ln -s full-path-to-syso-VERSION syso
- shell> ln -s /usr/local/syso/support/syso.service /usr/lib/systemd/system/syso.service
+ shell> ln -s /usr/local/syso/support/syso.service /etc/systemd/system/syso.service
 ```
-
-如果要以服务的方式启停 Syso，需要把 syso.service 中的 JAVA_HOME 改为真实路径：
-
-```
- Environment="JAVA_HOME=/usr/local/jdk1.8"
- 或者
- Environment="JAVA_HOME=/usr/local/jdk1.8/jre"
-```
-
-改完后使用 `systemctl daemon-reload` 重新加载服务配置
 
 发布的版本中，默认配置使用的是 MySQL 数据库，也可以修改使用 h2 数据库，如果使用 MySQL 需手动创建数据库和用户，命令如下：
 

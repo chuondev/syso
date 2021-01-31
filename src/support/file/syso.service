@@ -1,14 +1,10 @@
 [Unit]
 Description=Syso - a simple blogging system
-After=syslog.target network-online.target remote-fs.target nss-lookup.target
-Wants=network-online.target
+After=network.target
 
 [Service]
 Type=forking
-Environment="JAVA_HOME=/path/to/jre"
 ExecStart=/usr/local/syso/bin/sysod.sh start
-ExecReload=/usr/local/syso/bin/sysod.sh restart
-ExecStop=/usr/local/syso/bin/sysod.sh stop
 SuccessExitStatus=143
 
 [Install]
